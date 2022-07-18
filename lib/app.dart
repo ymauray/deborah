@@ -1,4 +1,4 @@
-import 'package:debbie/cubit/deb_get_cubit.dart';
+import 'package:deborah/cubit/deb_get_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';

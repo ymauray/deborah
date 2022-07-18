@@ -1,4 +1,4 @@
-import 'package:debbie/models/software.dart';
+import 'package:deborah/models/software.dart';
 import 'package:flutter/material.dart';
 
 class AppInfo extends StatelessWidget {

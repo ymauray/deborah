@@ -25,7 +25,7 @@ class LeftMenu extends StatelessWidget {
           padding: const EdgeInsets.all(16.0).copyWith(bottom: 32.0),
           child: Column(
             children: [
-              Text('Debbie', style: Theme.of(context).textTheme.headlineLarge),
+              Text('Deborah', style: Theme.of(context).textTheme.headlineLarge),
               FutureBuilder<String>(
                 builder: (context, future) => Text(
                   "deb-get ${future.data ?? "x.x.x"}",
