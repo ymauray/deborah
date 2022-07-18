@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=deborah
+Comment=A Flutter frontend for deb-get
+Exec=/usr/bin/deborah
+Terminal=false
+Type=Application
+Icon=deborah_512.png
