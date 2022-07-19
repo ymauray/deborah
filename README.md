@@ -1,8 +1,8 @@
-<h2 align="center">
-  <img src="assets/resources/deborah_128.png" alt="deb-get">
+<p align="center">
+  <img src="assets/resources/deborah_256.png" alt="deb-get">
   <br />
   <tt>deborah</tt>
-</h2>
+</p>
 
 <p align="center">
   <b>
@@ -10,10 +10,8 @@
   </b>
 </p>
 
-<h1 align="center"/>
-<h2 align="center">
-    <p style="color: red;"><b>WARNING</b>
-</h2>
+<h2 align="center"/>
+<p align="center" style="color: red;"><b>WARNING</b></p>
 <p align="center">
     <tt>deborah</tt> is in early alpha stage, and should absolutely and definitely not be used in production.<br/>
     Some functionalities are missing, others are broken.
