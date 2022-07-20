@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../cubit/deb_get_cubit.dart';
@@ -8,12 +9,15 @@ class LeftMenu extends StatelessWidget {
     Key? key,
     required DebGetState state,
     required Future<String>? version,
+    required Future<PackageInfo>? packageInfo,
   })  : _state = state,
         _version = version,
+        _packageInfo = packageInfo,
         super(key: key);
 
   final DebGetState _state;
   final Future<String>? _version;
+  final Future<PackageInfo>? _packageInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,16 @@ class LeftMenu extends StatelessWidget {
           padding: const EdgeInsets.all(16.0).copyWith(bottom: 32.0),
           child: Column(
             children: [
-              Text('Deborah', style: Theme.of(context).textTheme.headlineLarge),
+              Image.asset('assets/resources/deborah_128.png'),
+              const SizedBox(height: 8.0),
+              FutureBuilder<PackageInfo>(
+                builder: (context, future) => Text(
+                  "v${future.data?.version ?? "x.x.x"}",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                future: _packageInfo,
+              ),
+              const SizedBox(height: 8.0),
               FutureBuilder<String>(
                 builder: (context, future) => Text(
                   "deb-get ${future.data ?? "x.x.x"}",

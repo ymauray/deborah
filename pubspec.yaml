@@ -15,6 +15,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   provider: ^6.0.3
   csv: ^5.0.1
+  package_info_plus: ^1.4.2
 
 dev_dependencies:
   flutter_test:
@@ -25,3 +26,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icons/
+    - assets/resources/

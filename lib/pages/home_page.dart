@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../cubit/deb_get_cubit.dart';
 import '../models/software.dart';
@@ -17,12 +18,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Stream<Software>? _stream;
   Future<String>? _version;
+  Future<PackageInfo>? _packageInfo;
 
   @override
   initState() {
     super.initState();
     _stream = context.read<DebGetCubit>().loadApplications();
     _version = context.read<DebGetCubit>().getVersion();
+    _packageInfo = PackageInfo.fromPlatform();
   }
 
   @override
@@ -32,7 +35,11 @@ class _HomePageState extends State<HomePage> {
       builder: (context, state) {
         return Row(
           children: [
-            LeftMenu(state: state, version: _version),
+            LeftMenu(
+              state: state,
+              version: _version,
+              packageInfo: _packageInfo,
+            ),
             const VerticalDivider(),
             if (state is DebGetInitial)
               Expanded(child: LoaderIndicator(stream: _stream)),
