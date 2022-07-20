@@ -10,7 +10,7 @@
   </b>
 </p>
 
-<h2 align="center"/>
+<h2 align="center"></h2>
 <p align="center" style="color: red;"><b>WARNING</b></p>
 <p align="center">
     <tt>deborah</tt> is in early alpha stage, and should absolutely and definitely not be used in production.<br/>
