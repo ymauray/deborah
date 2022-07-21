@@ -1,45 +1,40 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import '../models/software.dart';
+import '../models/update.dart';
 
-class AppMeta extends StatelessWidget {
+class AppMeta extends StatefulWidget {
   const AppMeta({
     required this.app,
-    Key? key,
-  }) : super(key: key);
+    VoidCallback? onInstall,
+    VoidCallback? onRemove,
+    VoidCallback? onUpdate,
+    bool notInstalled = true,
+    this.update,
+    super.key,
+  })  : _onInstall = onInstall,
+        _onRemove = onRemove,
+        _onUpdate = onUpdate,
+        _notInstalled = notInstalled;
 
   final Software app;
+  final Update? update;
+  final VoidCallback? _onInstall;
+  final VoidCallback? _onRemove;
+  final VoidCallback? _onUpdate;
+  final bool _notInstalled;
 
-  Future<Software> getMeta() {
-    var completer = Completer<Software>();
-    if (app.info != null) {
-      completer.complete(app);
-    } else {
-      var lines = <String>[];
-      Process.start('/mnt/data/dev/deb-get/deb-get', ['show', app.packageName])
-          .then((process) {
-        process.stdout.transform(utf8.decoder).forEach((line) {
-          lines.addAll(line.split('\n').map((e) => e.trim()));
-        });
-        process.exitCode.then((value) {
-          app.info = lines
-              .skip(1)
-              .where(
-                (element) =>
-                    !element.startsWith('Package') &&
-                    !element.startsWith('Summary'),
-              )
-              .join('\n');
-          completer.complete(app);
-        });
-      });
-    }
+  @override
+  State<AppMeta> createState() => _AppMetaState();
+}
 
-    return completer.future;
+class _AppMetaState extends State<AppMeta> {
+  Software? app;
+
+  @override
+  initState() {
+    super.initState();
+    app = widget.app;
   }
 
   @override
@@ -50,40 +45,53 @@ class AppMeta extends StatelessWidget {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: FutureBuilder<Software>(
-              future: getMeta(),
-              builder: (context, snapshot) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (app.info != null)
-                      Text(
-                        app.info ?? '',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    if (app.info == null)
-                      Text(
-                        'Fetching information...',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    if (app.installedVersion == '')
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: ElevatedButton(
-                            onPressed: () {}, child: const Text('Install')),
-                      ),
-                    if (app.installedVersion != '')
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: ElevatedButton(
-                            onPressed: () {}, child: const Text('Uninstall')),
-                      ),
-                  ],
-                );
-              },
-            ),
+            child: _showMeta(),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _showMeta() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (app!.info != null)
+          Text(
+            app!.info ?? '',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        if (app!.info == null)
+          Text(
+            'Fetching information...',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        if (widget._notInstalled)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: ElevatedButton(
+              onPressed: widget._onInstall,
+              child: const Text('Install'),
+            ),
+          ),
+        if (!widget._notInstalled && widget.update == null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: ElevatedButton(
+              onPressed: widget._onRemove,
+              child: const Text('Remove'),
+            ),
+          ),
+        if (!widget._notInstalled && widget.update != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: ElevatedButton(
+              onPressed: widget._onUpdate,
+              child: Text(
+                'Update to version ${widget.update!.updateVersion}',
+              ),
+            ),
+          ),
       ],
     );
   }

@@ -1,9 +1,9 @@
-import 'package:deborah/cubit/deb_get_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:yaru/yaru.dart';
 
+import 'cubit/deb_get_cubit.dart';
 import 'pages/home_page.dart';
 
 class App extends StatelessWidget {

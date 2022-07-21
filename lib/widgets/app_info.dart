@@ -1,5 +1,6 @@
-import 'package:deborah/models/software.dart';
 import 'package:flutter/material.dart';
+
+import '../models/software.dart';
 
 class AppInfo extends StatelessWidget {
   const AppInfo({
@@ -36,27 +37,28 @@ class AppInfo extends StatelessWidget {
           ),
           const VerticalDivider(width: 8.0),
           SizedBox(
-              width: 230.0,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+            width: 230.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    app.prettyName,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  if (app.installedVersion != '')
                     Text(
-                      app.prettyName,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      app.installedVersion,
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
-                    if (app.installedVersion != '')
-                      Text(
-                        app.installedVersion,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                  ],
-                ),
-              )),
+                ],
+              ),
+            ),
+          ),
           const VerticalDivider(width: 8.0),
           Expanded(
             child: Padding(
@@ -69,7 +71,7 @@ class AppInfo extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
-          )
+          ),
         ],
       ),
     );

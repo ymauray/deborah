@@ -4,9 +4,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../cubit/deb_get_cubit.dart';
 import '../models/software.dart';
-import '../widgets/application_list.dart';
 import '../widgets/left_menu.dart';
 import '../widgets/loader_indicator.dart';
+import '../widgets/panels/application_list_panel.dart';
+import '../widgets/panels/look_for_updates_panel.dart';
+import '../widgets/panels/updates_panel.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -43,8 +45,13 @@ class _HomePageState extends State<HomePage> {
             const VerticalDivider(),
             if (state is DebGetInitial)
               Expanded(child: LoaderIndicator(stream: _stream)),
-            if (state is DebGetLoaded && state.menu == DebGet.applications)
-              Expanded(child: ApplicationList(state)),
+            if (state is DebGetLoaded && state.menu == DebGetMenu.applications)
+              Expanded(child: ApplicationListPanel(state)),
+            if (state is DebGetLoaded &&
+                state.menu == DebGetMenu.lookForUpdates)
+              Expanded(child: LookForUpdatesPanel(state)),
+            if (state is DebGetLoaded && state.menu == DebGetMenu.updates)
+              Expanded(child: UpdatesPanel(state)),
           ],
         );
       },

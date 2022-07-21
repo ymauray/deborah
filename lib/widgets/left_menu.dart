@@ -51,25 +51,29 @@ class LeftMenu extends StatelessWidget {
         ),
         _MenuButton(
           'Applications',
-          enabled: _state is! DebGetInitial,
+          enabled: _state is! DebGetInitial &&
+              !(_state is DebGetLoaded &&
+                  (_state as DebGetLoaded).menu == DebGetMenu.lookForUpdates),
           selected: _state is DebGetLoaded &&
-              (_state as DebGetLoaded).menu == DebGet.applications,
-          onPressed: () => cubit.showApplications(),
+              (_state as DebGetLoaded).menu == DebGetMenu.applications,
+          onPressed: () => cubit.showApplicationsPanel(),
         ),
         const SizedBox(height: 8.0),
         _MenuButton(
           'Updates',
-          enabled: _state is! DebGetInitial,
+          enabled: !(_state is DebGetLoaded &&
+              (_state as DebGetLoaded).menu == DebGetMenu.lookForUpdates),
           selected: _state is DebGetLoaded &&
-              (_state as DebGetLoaded).menu == DebGet.updates,
-          onPressed: () => cubit.showUpdates(),
+              (_state as DebGetLoaded).menu == DebGetMenu.updates,
+          onPressed: () => cubit.showUpdatesPanel(),
         ),
         const SizedBox(height: 8.0),
         _MenuButton(
           'Options',
-          enabled: _state is! DebGetInitial,
+          enabled: !(_state is DebGetLoaded &&
+              (_state as DebGetLoaded).menu == DebGetMenu.lookForUpdates),
           selected: _state is DebGetLoaded &&
-              (_state as DebGetLoaded).menu == DebGet.options,
+              (_state as DebGetLoaded).menu == DebGetMenu.options,
           onPressed: () => cubit.showOptions(),
         ),
       ],

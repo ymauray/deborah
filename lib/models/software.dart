@@ -7,15 +7,15 @@ class Software {
     required this.installedVersion,
     required this.architecture,
   });
-  final String packageName;
-  final String prettyName;
-  final String description;
-  final String icon;
-  final String installedVersion;
-  final String architecture;
 
-  bool selected = false;
+  String packageName;
+  String prettyName;
+  String description;
+  String icon;
+  String installedVersion;
+  String architecture;
   String? info;
+  bool selected = false;
 
   @override
   String toString() {

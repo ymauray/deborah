@@ -11,10 +11,12 @@ class DebGetLoaded extends DebGetState {
   const DebGetLoaded(
     this.menu,
     this.applications,
+    this.updates,
   );
 
-  final DebGet menu;
+  final DebGetMenu menu;
   final List<Software> applications;
+  final List<Update> updates;
 }
 
 class DebGetError extends DebGetState {}

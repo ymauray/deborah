@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../cubit/deb_get_cubit.dart';
-import 'app_list_view.dart';
-import 'search_bar.dart';
+import '../../cubit/deb_get_cubit.dart';
+import '../app_list_view.dart';
+import '../search_bar.dart';
 
-class ApplicationList extends StatefulWidget {
-  const ApplicationList(DebGetLoaded state, {Key? key})
+class ApplicationListPanel extends StatefulWidget {
+  const ApplicationListPanel(DebGetLoaded state, {Key? key})
       : _state = state,
         super(key: key);
 
   final DebGetLoaded _state;
 
   @override
-  State<ApplicationList> createState() => _ApplicationListState();
+  State<ApplicationListPanel> createState() => _ApplicationListPanelState();
 }
 
-class _ApplicationListState extends State<ApplicationList> {
+class _ApplicationListPanelState extends State<ApplicationListPanel> {
   var _filter = '';
 
   @override

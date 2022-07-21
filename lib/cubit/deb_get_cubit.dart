@@ -1,12 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/software.dart';
+import '../models/update.dart';
+import '../utils/deb_get.dart';
 
 part 'deb_get_state.dart';
 
@@ -16,12 +16,12 @@ const cache = String.fromEnvironment(
   defaultValue: '$home/.cache',
 );
 
-final sourceRegExp = RegExp(r'^\[<img src="\.github/(.*\.png).*\((.*)\)$');
-final packageNameRegExp = RegExp(r'^`(.*)`$');
-final descriptionRegExp = RegExp(r"<i>(.*)</i>");
+final updateAvailableRegExp =
+    RegExp(r"(.*) \((.*)\) has an update pending. (.*) is available.");
 
-enum DebGet {
+enum DebGetMenu {
   applications,
+  lookForUpdates,
   updates,
   options,
 }
@@ -29,39 +29,61 @@ enum DebGet {
 class DebGetCubit extends Cubit<DebGetState> {
   DebGetCubit() : super(DebGetInitial());
 
-  final _softwares = <String, Software>{};
-  final _controller = StreamController<Software>();
+  final _applications = <String, Software>{};
+  final _applicationsController = StreamController<Software>();
+  final _updates = <Update>[];
+  StreamController<String>? _updatesController;
 
   Stream<Software> loadApplications() {
-    if (!_controller.isClosed) {
-      Process.start('/mnt/data/dev/deb-get/deb-get', ['csvlist'])
-          .then((process) {
-        process.stdout.transform(utf8.decoder).forEach(_parseCsvlistOutput);
-        process.exitCode.then((value) {
-          _controller.close();
-          if (value == 0) {
-            emit(DebGetLoaded(DebGet.applications, _softwares.values.toList()));
-          } else {
-            emit(DebGetError());
-          }
-        });
+    if (!_applicationsController.isClosed) {
+      DebGet.run(['csvlist'], _parseCsvlistOutput, (exitCode) {
+        _applicationsController.close();
+        if (exitCode == 0) {
+          emit(
+            DebGetLoaded(
+              DebGetMenu.applications,
+              _applications.values.toList(),
+              const [],
+            ),
+          );
+        } else {
+          emit(DebGetError());
+        }
       });
     }
 
-    return _controller.stream;
+    return _applicationsController.stream;
   }
 
-  void showApplications() {
+  void showApplicationsPanel() {
+    var currentState = state as DebGetLoaded;
+    emit(
+      DebGetLoaded(
+        DebGetMenu.applications,
+        currentState.applications,
+        const [],
+      ),
+    );
+  }
+
+  void showUpdatesPanel() {
+    var currentState = state as DebGetLoaded;
     emit(DebGetLoaded(
-        DebGet.applications, (state as DebGetLoaded).applications));
-  }
-
-  void showUpdates() {
-    emit(DebGetLoaded(DebGet.updates, (state as DebGetLoaded).applications));
+      DebGetMenu.lookForUpdates,
+      currentState.applications,
+      const [],
+    ));
   }
 
   void showOptions() {
-    emit(DebGetLoaded(DebGet.options, (state as DebGetLoaded).applications));
+    var currentState = state as DebGetLoaded;
+    emit(
+      DebGetLoaded(
+        DebGetMenu.options,
+        currentState.applications,
+        currentState.updates,
+      ),
+    );
   }
 
   void _parseCsvlistOutput(String lines) async {
@@ -72,7 +94,6 @@ class DebGetCubit extends Cubit<DebGetState> {
       if (rows.isEmpty) continue;
       var columns = rows[0];
       if (columns.length != 6) continue;
-      debugPrint(columns.toString());
       var packageName = columns[0].trim();
       var prettyName = columns[1].trim();
       var installedVersion = columns[2].trim();
@@ -100,23 +121,77 @@ class DebGetCubit extends Cubit<DebGetState> {
         installedVersion: installedVersion,
         architecture: architecture,
       );
-      _softwares.putIfAbsent(
+      _applications.putIfAbsent(
         packageName,
         () => software,
       );
-      _controller.add(software);
+      _applicationsController.add(software);
     }
   }
 
   Future<String> getVersion() {
     var version = Completer<String>();
 
-    Process.start('/mnt/data/dev/deb-get/deb-get', ['version']).then((process) {
-      process.stdout.transform(utf8.decoder).forEach((line) {
+    DebGet.run(
+      ['version'],
+      (line) {
         version.complete(line.trim());
-      });
-    });
+      },
+      null,
+    );
 
     return version.future;
+  }
+
+  Stream<String>? loadUpdates() {
+    if (_updatesController == null || _updatesController!.isClosed) {
+      _updatesController = StreamController<String>();
+    }
+
+    DebGet.run(
+      ['update'],
+      _parseUpdatesOutput,
+      (exitCode) {
+        _updatesController!.close();
+        if (exitCode == 0) {
+          var currentState = state as DebGetLoaded;
+          emit(
+            DebGetLoaded(
+              DebGetMenu.updates,
+              currentState.applications,
+              _updates,
+            ),
+          );
+        } else {
+          emit(DebGetError());
+        }
+      },
+      elevate: true,
+    );
+
+    return _updatesController!.stream;
+  }
+
+  void _parseUpdatesOutput(String lines) async {
+    for (var line in lines.split('\n')) {
+      if (line.isNotEmpty) {
+        if (line.startsWith("  ") && line.contains("32m")) {
+          line = line.substring(15);
+          if (updateAvailableRegExp.hasMatch(line)) {
+            var match = updateAvailableRegExp.allMatches(line).first;
+            var packageName = match.group(1);
+            var installedVersion = match.group(2);
+            var updateVersion = match.group(3);
+            var update = Update(
+              packageName: packageName!,
+              installedVersion: installedVersion!,
+              updateVersion: updateVersion!,
+            );
+            _updates.add(update);
+          }
+        }
+        _updatesController!.add(line);
+      }
+    }
   }
 }
