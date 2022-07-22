@@ -23,13 +23,11 @@ class AppListView extends StatelessWidget {
         (context, index) {
           final app = apps[index];
 
-          return AppCardWrapper(
-            child: AppCard(
-              index: index,
-              app: app,
-              update: updates?[app.packageName],
-              onAppSelected: onAppSelected,
-            ),
+          return AppCard(
+            index: index,
+            app: app,
+            update: updates?[app.packageName],
+            onAppSelected: onAppSelected,
           );
         },
         childCount: apps.length,

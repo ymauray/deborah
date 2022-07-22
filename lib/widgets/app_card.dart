@@ -8,18 +8,6 @@ import '../utils/deb_get.dart';
 import 'app_info.dart';
 import 'app_meta.dart';
 
-class AppCardWrapper extends InheritedWidget {
-  const AppCardWrapper({required super.child, super.key});
-
-  static AppCardWrapper? of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<AppCardWrapper>();
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return true;
-  }
-}
-
 class AppCard extends StatefulWidget {
   const AppCard({
     required this.index,
