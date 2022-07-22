@@ -33,7 +33,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<DebGetCubit, DebGetState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is DebGetError) {
+          context.read<DebGetCubit>().showApplicationsPanel();
+        }
+      },
       builder: (context, state) {
         return Row(
           children: [
