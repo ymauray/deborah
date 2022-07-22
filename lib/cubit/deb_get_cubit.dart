@@ -47,7 +47,7 @@ class DebGetCubit extends Cubit<DebGetState> {
             ),
           );
         } else {
-          emit(DebGetError());
+          emit(DebGetError(state.applications));
         }
       });
     }
@@ -56,21 +56,19 @@ class DebGetCubit extends Cubit<DebGetState> {
   }
 
   void showApplicationsPanel() {
-    var currentState = state as DebGetLoaded;
     emit(
       DebGetLoaded(
         DebGetMenu.applications,
-        currentState.applications,
+        state.applications,
         const [],
       ),
     );
   }
 
   void showUpdatesPanel() {
-    var currentState = state as DebGetLoaded;
     emit(DebGetLoaded(
       DebGetMenu.lookForUpdates,
-      currentState.applications,
+      state.applications,
       const [],
     ));
   }
@@ -163,7 +161,7 @@ class DebGetCubit extends Cubit<DebGetState> {
             ),
           );
         } else {
-          emit(DebGetError());
+          emit(DebGetError(state.applications));
         }
       },
       elevate: true,

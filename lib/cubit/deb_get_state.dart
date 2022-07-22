@@ -2,21 +2,27 @@ part of 'deb_get_cubit.dart';
 
 @immutable
 abstract class DebGetState {
-  const DebGetState();
+  const DebGetState(
+    this.applications,
+  );
+  final List<Software> applications;
 }
 
-class DebGetInitial extends DebGetState {}
+class DebGetInitial extends DebGetState {
+  DebGetInitial() : super(<Software>[]);
+}
 
 class DebGetLoaded extends DebGetState {
   const DebGetLoaded(
     this.menu,
-    this.applications,
+    super.applications,
     this.updates,
   );
 
   final DebGetMenu menu;
-  final List<Software> applications;
   final List<Update> updates;
 }
 
-class DebGetError extends DebGetState {}
+class DebGetError extends DebGetState {
+  const DebGetError(super.applications);
+}
