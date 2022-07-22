@@ -29,12 +29,9 @@ class AppMeta extends StatefulWidget {
 }
 
 class _AppMetaState extends State<AppMeta> {
-  Software? app;
-
   @override
   initState() {
     super.initState();
-    app = widget.app;
   }
 
   @override
@@ -56,12 +53,12 @@ class _AppMetaState extends State<AppMeta> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (app!.info != null)
+        if (widget.app.info != null)
           Text(
-            app!.info ?? '',
+            widget.app.info ?? '',
             style: Theme.of(context).textTheme.bodySmall,
           ),
-        if (app!.info == null)
+        if (widget.app.info == null)
           Text(
             'Fetching information...',
             style: Theme.of(context).textTheme.bodySmall,

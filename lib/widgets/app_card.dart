@@ -30,25 +30,23 @@ class _AppCardState extends State<AppCard> {
   @override
   void initState() {
     super.initState();
-    app = widget.app;
   }
 
   bool notInstalled = false;
-  Software? app;
 
   Future<Software> getMeta() {
     var completer = Completer<Software>();
-    if (app!.info != null || !app!.selected) {
-      completer.complete(app!);
+    if (widget.app.info != null || !widget.app.selected) {
+      completer.complete(widget.app);
     } else {
       var lines = <String>[];
       DebGet.run(
-        ['show', app!.packageName],
+        ['show', widget.app.packageName],
         (line) {
           lines.addAll(line.split('\n').map((e) => e.trim()));
         },
         (exitCode) {
-          app!.info = lines
+          widget.app.info = lines
               .skip(1)
               .where(
                 (element) =>
@@ -57,13 +55,13 @@ class _AppCardState extends State<AppCard> {
               )
               .join('\n');
 
-          notInstalled = app!.info?.contains("Installed:\tNo") ?? false;
+          notInstalled = widget.app.info?.contains("Installed:\tNo") ?? false;
           if (!notInstalled) {
             var r = RegExp(r'Installed:\s*(.*)\n');
-            var m = r.firstMatch(app!.info ?? '');
-            app!.installedVersion = m?.group(1) ?? '';
+            var m = r.firstMatch(widget.app.info ?? '');
+            widget.app.installedVersion = m?.group(1) ?? '';
           }
-          completer.complete(app);
+          completer.complete(widget.app);
         },
       );
     }
@@ -82,7 +80,7 @@ class _AppCardState extends State<AppCard> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               if (widget.onAppSelected != null) {
-                widget.onAppSelected!(app!);
+                widget.onAppSelected!(widget.app);
               }
             },
             child: FutureBuilder<Software>(
@@ -91,17 +89,17 @@ class _AppCardState extends State<AppCard> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppInfo(app: app!),
-                    if (app!.selected)
+                    AppInfo(app: widget.app),
+                    if (widget.app.selected)
                       AppMeta(
-                        app: app!,
+                        app: widget.app,
                         update: widget.update,
                         notInstalled: notInstalled,
                         onInstall: () async {
                           await installApp(context, widget.app);
                           setState(() {
-                            app!.info = null;
-                            app!.installedVersion = '';
+                            widget.app.info = null;
+                            widget.app.installedVersion = '';
                           });
                         },
                         onRemove: () async {
@@ -111,8 +109,8 @@ class _AppCardState extends State<AppCard> {
                             remove: true,
                           );
                           setState(() {
-                            app!.info = null;
-                            app!.installedVersion = '';
+                            widget.app.info = null;
+                            widget.app.installedVersion = '';
                           });
                         },
                         onUpdate: () async {
