@@ -9,12 +9,14 @@ class AppListView extends StatelessWidget {
     required this.apps,
     this.updates,
     this.onAppSelected,
+    this.onAppUpdated,
     Key? key,
   }) : super(key: key);
 
   final List<Software> apps;
   final Map<String, Update>? updates;
   final void Function(Software app)? onAppSelected;
+  final void Function(Software app)? onAppUpdated;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class AppListView extends StatelessWidget {
             app: app,
             update: updates?[app.packageName],
             onAppSelected: onAppSelected,
+            onAppUpdated: onAppUpdated,
           );
         },
         childCount: apps.length,

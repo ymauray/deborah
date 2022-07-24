@@ -4,25 +4,27 @@ part of 'deb_get_cubit.dart';
 abstract class DebGetState {
   const DebGetState(
     this.applications,
+    this.updates,
   );
+
   final List<Software> applications;
+  final List<Update> updates;
 }
 
 class DebGetInitial extends DebGetState {
-  DebGetInitial() : super(<Software>[]);
+  DebGetInitial() : super(<Software>[], <Update>[]);
 }
 
 class DebGetLoaded extends DebGetState {
   const DebGetLoaded(
     this.menu,
     super.applications,
-    this.updates,
+    super.updates,
   );
 
   final DebGetMenu menu;
-  final List<Update> updates;
 }
 
 class DebGetError extends DebGetState {
-  const DebGetError(super.applications);
+  const DebGetError(super.applications, super.updates);
 }

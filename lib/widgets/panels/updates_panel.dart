@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../cubit/deb_get_cubit.dart';
 import '../../models/software.dart';
@@ -47,6 +48,15 @@ class _UpdatesPanelState extends State<UpdatesPanel> {
                   onPressed: () {},
                   child: const Text("Update all"),
                 ),
+              const SizedBox(
+                width: 8.0,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  context.read<DebGetCubit>().refreshUpdates();
+                },
+                child: const Text("Refresh"),
+              ),
             ],
           ),
         ),
@@ -57,6 +67,11 @@ class _UpdatesPanelState extends State<UpdatesPanel> {
             onAppSelected: (app) {
               setState(() {
                 app.selected = !app.selected;
+              });
+            },
+            onAppUpdated: (app) {
+              setState(() {
+                apps.removeWhere((a) => a.packageName == app.packageName);
               });
             },
           ),

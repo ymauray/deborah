@@ -43,11 +43,11 @@ class DebGetCubit extends Cubit<DebGetState> {
             DebGetLoaded(
               DebGetMenu.applications,
               _applications.values.toList(),
-              const [],
+              state.updates,
             ),
           );
         } else {
-          emit(DebGetError(state.applications));
+          emit(DebGetError(state.applications, state.updates));
         }
       });
     }
@@ -60,12 +60,20 @@ class DebGetCubit extends Cubit<DebGetState> {
       DebGetLoaded(
         DebGetMenu.applications,
         state.applications,
-        const [],
+        state.updates,
       ),
     );
   }
 
   void showUpdatesPanel() {
+    emit(DebGetLoaded(
+      state.updates.isEmpty ? DebGetMenu.lookForUpdates : DebGetMenu.updates,
+      state.applications,
+      state.updates,
+    ));
+  }
+
+  void refreshUpdates() {
     emit(DebGetLoaded(
       DebGetMenu.lookForUpdates,
       state.applications,
@@ -74,12 +82,11 @@ class DebGetCubit extends Cubit<DebGetState> {
   }
 
   void showOptions() {
-    var currentState = state as DebGetLoaded;
     emit(
       DebGetLoaded(
         DebGetMenu.options,
-        currentState.applications,
-        currentState.updates,
+        state.applications,
+        state.updates,
       ),
     );
   }
@@ -152,16 +159,15 @@ class DebGetCubit extends Cubit<DebGetState> {
       (exitCode) {
         _updatesController!.close();
         if (exitCode == 0) {
-          var currentState = state as DebGetLoaded;
           emit(
             DebGetLoaded(
               DebGetMenu.updates,
-              currentState.applications,
+              state.applications,
               _updates,
             ),
           );
         } else {
-          emit(DebGetError(state.applications));
+          emit(DebGetError(state.applications, state.updates));
         }
       },
       elevate: true,

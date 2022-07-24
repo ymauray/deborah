@@ -54,7 +54,11 @@ class _HomePageState extends State<HomePage> {
               Expanded(child: ApplicationListPanel(state)),
             if (state is DebGetLoaded &&
                 state.menu == DebGetMenu.lookForUpdates)
-              Expanded(child: LookForUpdatesPanel(state)),
+              Expanded(
+                child: state.updates.isEmpty
+                    ? LookForUpdatesPanel(state)
+                    : UpdatesPanel(state),
+              ),
             if (state is DebGetLoaded && state.menu == DebGetMenu.updates)
               Expanded(child: UpdatesPanel(state)),
             if (state is DebGetLoaded && state.menu == DebGetMenu.options)

@@ -14,6 +14,7 @@ class AppCard extends StatefulWidget {
     required this.app,
     this.update,
     this.onAppSelected,
+    this.onAppUpdated,
     Key? key,
   }) : super(key: key);
 
@@ -21,6 +22,7 @@ class AppCard extends StatefulWidget {
   final Software app;
   final Update? update;
   final void Function(Software app)? onAppSelected;
+  final void Function(Software app)? onAppUpdated;
 
   @override
   State<AppCard> createState() => _AppCardState();
@@ -114,8 +116,15 @@ class _AppCardState extends State<AppCard> {
                           });
                         },
                         onUpdate: () async {
-                          await installApp(context, widget.app);
-                          setState(() {});
+                          await installApp(
+                            context,
+                            widget.app,
+                            update: true,
+                          );
+                          setState(() {
+                            widget.app.info = null;
+                            widget.app.installedVersion = '';
+                          });
                         },
                       ),
                   ],
@@ -133,7 +142,9 @@ class _AppCardState extends State<AppCard> {
     BuildContext context,
     Software app, {
     bool remove = false,
+    bool update = false,
   }) async {
+    assert(!remove || !update);
     final CapturedThemes themes = InheritedTheme.capture(
       from: context,
       to: Navigator.of(
@@ -149,8 +160,15 @@ class _AppCardState extends State<AppCard> {
       barrierLabel: "Dismiss",
       pageBuilder: (context, animation, secondaryAnimation) => themes.wrap(
         _ProcessFeedback(
-          "${remove ? 'Removing' : 'Installing'} ${app.packageName}",
-          [(remove ? 'remove' : 'install'), app.packageName],
+          "${remove ? 'Removing' : update ? 'Updating' : 'Installing'} ${app.packageName}",
+          [
+            (remove
+                ? 'remove'
+                : update
+                    ? 'reinstall'
+                    : 'install'),
+            app.packageName,
+          ],
           elevate: true,
         ),
       ),
