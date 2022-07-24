@@ -8,6 +8,7 @@ import '../widgets/left_menu.dart';
 import '../widgets/loader_indicator.dart';
 import '../widgets/panels/application_list_panel.dart';
 import '../widgets/panels/look_for_updates_panel.dart';
+import '../widgets/panels/options_panel.dart';
 import '../widgets/panels/updates_panel.dart';
 
 class HomePage extends StatefulWidget {
@@ -56,6 +57,8 @@ class _HomePageState extends State<HomePage> {
               Expanded(child: LookForUpdatesPanel(state)),
             if (state is DebGetLoaded && state.menu == DebGetMenu.updates)
               Expanded(child: UpdatesPanel(state)),
+            if (state is DebGetLoaded && state.menu == DebGetMenu.options)
+              const Expanded(child: OptionsPanel()),
           ],
         );
       },

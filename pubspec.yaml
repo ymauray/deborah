@@ -16,6 +16,8 @@ dependencies:
   provider: ^6.0.3
   csv: ^5.0.1
   package_info_plus: ^1.4.2
+  shared_preferences: ^2.0.15
+  flutter_form_builder: ^7.4.0
 
 dev_dependencies:
   flutter_test:

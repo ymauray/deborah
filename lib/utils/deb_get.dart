@@ -1,15 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
 
-class DebGet {
-  static const String debget = '/mnt/data/dev/deb-get/deb-get';
+import 'package:deborah/utils/local_storage.dart';
 
+class DebGet {
   static void run(
     List<String> arguments,
     void Function(String line) action,
     void Function(int exitCode)? exit, {
     bool elevate = false,
   }) {
+    var debget = LocalStorage.get(LocalStorage.debgetpathKey, 'deb-get');
+    if (debget.isEmpty) {
+      debget = 'deb-get';
+    }
     Process.start(
       elevate ? 'pkexec' : debget,
       [if (elevate) debget, ...arguments],
