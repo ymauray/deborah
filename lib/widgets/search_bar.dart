@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
   const SearchBar({
-    this.onChanged,
-    this.initialValue,
+    ValueChanged<String>? onChanged,
+    VoidCallback? onRefresh,
+    String? initialValue,
     Key? key,
-  }) : super(key: key);
+  })  : _onChanged = onChanged,
+        _onRefresh = onRefresh,
+        _initialValue = initialValue,
+        super(key: key);
 
-  final ValueChanged<String>? onChanged;
-  final String? initialValue;
+  final ValueChanged<String>? _onChanged;
+  final VoidCallback? _onRefresh;
+  final String? _initialValue;
 
   @override
   State<SearchBar> createState() => _SearchBarState();
@@ -20,7 +25,7 @@ class _SearchBarState extends State<SearchBar> {
   @override
   void initState() {
     super.initState();
-    controller.text = widget.initialValue ?? '';
+    controller.text = widget._initialValue ?? '';
   }
 
   @override
@@ -39,13 +44,27 @@ class _SearchBarState extends State<SearchBar> {
                 labelText: 'Search',
                 suffixIcon: IconButton(
                   onPressed: () {
-                    widget.onChanged?.call('');
+                    widget._onChanged?.call('');
                     controller.clear();
                   },
                   icon: const Icon(Icons.close),
                 ),
               ),
-              onChanged: widget.onChanged,
+              onChanged: widget._onChanged,
+            ),
+          ),
+          const SizedBox(
+            width: 8.0,
+          ),
+          OutlinedButton(
+            onPressed: widget._onRefresh,
+            child: Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Text(
+                'Refresh',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+              ),
             ),
           ),
         ],

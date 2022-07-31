@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../cubit/deb_get_cubit.dart';
+import '../../models/software.dart';
 import '../../utils/memory_cache.dart';
 import '../app_list_view.dart';
 import '../search_bar.dart';
 
 class ApplicationListPanel extends StatefulWidget {
-  const ApplicationListPanel(DebGetLoaded state, {Key? key})
-      : _state = state,
+  const ApplicationListPanel(
+    List<Software> apps, {
+    VoidCallback? onRefresh,
+    Key? key,
+  })  : _apps = apps,
+        _onRefresh = onRefresh,
         super(key: key);
 
-  final DebGetLoaded _state;
+  final List<Software> _apps;
+  final VoidCallback? _onRefresh;
 
   @override
   State<ApplicationListPanel> createState() => _ApplicationListPanelState();
@@ -23,7 +28,6 @@ class _ApplicationListPanelState extends State<ApplicationListPanel> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _cache = context.read<MemoryCache>();
     _filter = _cache!.get('filter', defaultValue: '')!;
@@ -31,7 +35,7 @@ class _ApplicationListPanelState extends State<ApplicationListPanel> {
 
   @override
   Widget build(BuildContext context) {
-    var apps = widget._state.applications
+    var apps = widget._apps
         .where(
           (app) =>
               app.prettyName.toLowerCase().contains(
@@ -56,6 +60,7 @@ class _ApplicationListPanelState extends State<ApplicationListPanel> {
               _cache!.set('filter', value);
             });
           },
+          onRefresh: widget._onRefresh,
         ),
         Expanded(
           child: AppListView(

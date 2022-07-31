@@ -30,11 +30,6 @@ class AppMeta extends StatefulWidget {
 
 class _AppMetaState extends State<AppMeta> {
   @override
-  initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Row(
       children: [

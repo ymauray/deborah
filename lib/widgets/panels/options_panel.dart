@@ -57,48 +57,60 @@ class _OptionsPanelState extends State<OptionsPanel> {
                             },
                           ),
                         ),
+                        onChanged: (value) {
+                          debugPrint(value);
+                          LocalStorage.set(
+                            LocalStorage.debgetpathKey,
+                            (value ?? ''),
+                          );
+                        },
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState?.saveAndValidate() ?? false) {
-                          debugPrint(_formKey.currentState?.value.toString());
-                          LocalStorage.set(
-                            LocalStorage.debgetpathKey,
-                            (_formKey.currentState?.value['debgetpath'] ?? '')
-                                as String,
-                          );
-                        } else {
-                          debugPrint(_formKey.currentState?.value.toString());
-                          debugPrint('validation failed');
-                        }
-                      },
-                      child: const Text(
-                        'Submit',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    OutlinedButton(
-                      onPressed: () {
-                        _formKey.currentState?.reset();
-                      },
-                      // color: Theme.of(context).colorScheme.secondary,
-                      child: Text(
-                        'Reset',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                //const SizedBox(height: 16.0),
+                //Row(
+                //  mainAxisAlignment: MainAxisAlignment.end,
+                //  children: <Widget>[
+                //    ElevatedButton(
+                //      onPressed: () {
+                //        if (_formKey.currentState?.saveAndValidate() ?? false) {
+                //          LocalStorage.set(
+                //            LocalStorage.debgetpathKey,
+                //            (_formKey.currentState?.value['debgetpath'] ?? '')
+                //                as String,
+                //          );
+                //        } else {
+                //          debugPrint(_formKey.currentState?.value.toString());
+                //          debugPrint('validation failed');
+                //        }
+                //      },
+                //      child: const Padding(
+                //        padding: EdgeInsets.all(14.0),
+                //        child: Text(
+                //          'Submit',
+                //          style: TextStyle(color: Colors.white),
+                //        ),
+                //      ),
+                //    ),
+                //    const SizedBox(width: 20),
+                //    OutlinedButton(
+                //      onPressed: () {
+                //        _formKey.currentState?.reset();
+                //      },
+                //      // color: Theme.of(context).colorScheme.secondary,
+                //      child: Padding(
+                //        padding: const EdgeInsets.all(14.0),
+                //        child: Text(
+                //          'Reset',
+                //          style: TextStyle(
+                //            color: Theme.of(context).colorScheme.secondary,
+                //          ),
+                //        ),
+                //      ),
+                //    ),
+                //  ],
+                //),
               ],
             ),
           ),

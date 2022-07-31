@@ -27,50 +27,64 @@ enum DebGetMenu {
 }
 
 class DebGetCubit extends Cubit<DebGetState> {
-  DebGetCubit() : super(DebGetInitial());
+  DebGetCubit() : super(DebGetInitial(const []));
 
   final _applications = <String, Software>{};
-  final _applicationsController = StreamController<Software>();
+
   final _updates = <Update>[];
   StreamController<String>? _updatesController;
+  var _applicationsController = StreamController<Software>();
 
   Stream<Software> loadApplications() {
-    if (!_applicationsController.isClosed) {
-      DebGet.run(['csvlist'], _parseCsvlistOutput, (exitCode) {
-        _applicationsController.close();
+    DebGet.run(
+      ['csvlist'],
+      _parseCsvlistOutput,
+      (exitCode) {
         if (exitCode == 0) {
-          emit(
-            DebGetLoaded(
-              DebGetMenu.applications,
-              _applications.values.toList(),
-              state.updates,
-            ),
-          );
+          emit(DebGetMenuApplications(
+            _applications.values.toList(),
+            state.updates,
+          ));
         } else {
           emit(DebGetError(state.applications, state.updates));
         }
-      });
-    }
+      },
+    );
 
     return _applicationsController.stream;
   }
 
-  void showApplicationsPanel() {
+  void refreshApplications() {
+    _applications.clear();
+    _applicationsController = StreamController<Software>();
     emit(
-      DebGetLoaded(
-        DebGetMenu.applications,
+      DebGetInitial(state.updates),
+    );
+  }
+
+  void showApplicationsPanel() {
+    emit(DebGetMenuApplications(state.applications, state.updates));
+    //emit(
+    //  DebGetLoaded(
+    //    DebGetMenu.applications,
+    //    state.applications,
+    //    state.updates,
+    //  ),
+    //);
+  }
+
+  void showUpdatesPanel() {
+    emit(
+      DebGetMenuUpdates(
         state.applications,
         state.updates,
       ),
     );
-  }
-
-  void showUpdatesPanel() {
-    emit(DebGetLoaded(
-      state.updates.isEmpty ? DebGetMenu.lookForUpdates : DebGetMenu.updates,
-      state.applications,
-      state.updates,
-    ));
+    //emit(DebGetLoaded(
+    //  state.updates.isEmpty ? DebGetMenu.lookForUpdates : DebGetMenu.updates,
+    //  state.applications,
+    //  state.updates,
+    //));
   }
 
   void refreshUpdates() {
@@ -83,12 +97,18 @@ class DebGetCubit extends Cubit<DebGetState> {
 
   void showOptions() {
     emit(
-      DebGetLoaded(
-        DebGetMenu.options,
+      DebGetMenuOptions(
         state.applications,
         state.updates,
       ),
     );
+    //emit(
+    //  DebGetLoaded(
+    //    DebGetMenu.options,
+    //    state.applications,
+    //    state.updates,
+    //  ),
+    //);
   }
 
   void _parseCsvlistOutput(String lines) async {

@@ -29,11 +29,6 @@ class AppCard extends StatefulWidget {
 }
 
 class _AppCardState extends State<AppCard> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   bool notInstalled = false;
 
   Future<Software> getMeta() {

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../cubit/deb_get_cubit.dart';
 
-class LeftMenu extends StatelessWidget {
+class LeftMenu extends StatefulWidget {
   const LeftMenu({
     Key? key,
     required DebGetState state,
@@ -19,6 +19,11 @@ class LeftMenu extends StatelessWidget {
   final Future<String>? _version;
   final Future<PackageInfo>? _packageInfo;
 
+  @override
+  State<LeftMenu> createState() => _LeftMenuState();
+}
+
+class _LeftMenuState extends State<LeftMenu> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<DebGetCubit>();
@@ -36,7 +41,7 @@ class LeftMenu extends StatelessWidget {
                   "v${future.data?.version ?? "x.x.x"}",
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
-                future: _packageInfo,
+                future: widget._packageInfo,
               ),
               const SizedBox(height: 8.0),
               FutureBuilder<String>(
@@ -44,36 +49,29 @@ class LeftMenu extends StatelessWidget {
                   "deb-get ${future.data ?? "x.x.x"}",
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
-                future: _version,
+                future: widget._version,
               ),
             ],
           ),
         ),
         _MenuButton(
           'Applications',
-          enabled: _state is! DebGetInitial &&
-              !(_state is DebGetLoaded &&
-                  (_state as DebGetLoaded).menu == DebGetMenu.lookForUpdates),
-          selected: _state is DebGetLoaded &&
-              (_state as DebGetLoaded).menu == DebGetMenu.applications,
+          enabled: widget._state.menuEnabled,
+          selected: widget._state is DebGetMenuApplications,
           onPressed: () => cubit.showApplicationsPanel(),
         ),
         const SizedBox(height: 8.0),
         _MenuButton(
           'Updates',
-          enabled: !(_state is DebGetLoaded &&
-              (_state as DebGetLoaded).menu == DebGetMenu.lookForUpdates),
-          selected: _state is DebGetLoaded &&
-              (_state as DebGetLoaded).menu == DebGetMenu.updates,
+          enabled: widget._state.menuEnabled,
+          selected: widget._state is DebGetMenuUpdates,
           onPressed: () => cubit.showUpdatesPanel(),
         ),
         const SizedBox(height: 8.0),
         _MenuButton(
           'Options',
-          enabled: !(_state is DebGetLoaded &&
-              (_state as DebGetLoaded).menu == DebGetMenu.lookForUpdates),
-          selected: _state is DebGetLoaded &&
-              (_state as DebGetLoaded).menu == DebGetMenu.options,
+          enabled: widget._state.menuEnabled,
+          selected: widget._state is DebGetMenuOptions,
           onPressed: () => cubit.showOptions(),
         ),
       ],

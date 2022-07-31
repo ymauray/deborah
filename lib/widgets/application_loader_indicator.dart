@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../cubit/deb_get_cubit.dart';
 import '../models/software.dart';
 
-class LoaderIndicator extends StatelessWidget {
-  const LoaderIndicator({
+class ApplicationLoaderIndicator extends StatefulWidget {
+  const ApplicationLoaderIndicator({
     Key? key,
-    required Stream<Software>? stream,
-  })  : _stream = stream,
-        super(key: key);
+  }) : super(key: key);
 
-  final Stream<Software>? _stream;
+  @override
+  State<ApplicationLoaderIndicator> createState() =>
+      _ApplicationLoaderIndicatorState();
+}
 
+class _ApplicationLoaderIndicatorState
+    extends State<ApplicationLoaderIndicator> {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -22,7 +27,7 @@ class LoaderIndicator extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           StreamBuilder<Software>(
-            stream: _stream!,
+            stream: context.read<DebGetCubit>().loadApplications(),
             builder: (context, snapshot) {
               return Text(
                 snapshot.data?.packageName ?? '',
