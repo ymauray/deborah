@@ -1,9 +1,7 @@
-import 'package:deborah/utils/local_storage.dart';
+import 'package:deborah/app.dart';
 import 'package:flutter/material.dart';
-
-import 'app.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  LocalStorage.init();
-  runApp(const App());
+  runApp(const ProviderScope(child: App()));
 }

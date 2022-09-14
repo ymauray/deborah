@@ -1,55 +1,34 @@
+import 'package:deborah/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SearchBar extends StatefulWidget {
-  const SearchBar({
-    this.onChanged,
-    this.initialValue,
-    Key? key,
-  }) : super(key: key);
-
-  final ValueChanged<String>? onChanged;
-  final String? initialValue;
+class SearchBar extends ConsumerWidget {
+  const SearchBar({super.key});
 
   @override
-  State<SearchBar> createState() => _SearchBarState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = TextEditingController();
 
-class _SearchBarState extends State<SearchBar> {
-  final controller = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    controller.text = widget.initialValue ?? '';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0).copyWith(left: 0.0, top: 16.0),
-      child: Row(
-        children: [
-          // Search bar
-          Expanded(
-            child: TextFormField(
-              //initialValue: initialValue,
-              controller: controller,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: 'Search',
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    widget.onChanged?.call('');
-                    controller.clear();
-                  },
-                  icon: const Icon(Icons.close),
-                ),
-              ),
-              onChanged: widget.onChanged,
-            ),
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: 'Search',
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8),
           ),
-        ],
+        ),
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            ref.read(searchQueryProvider.notifier).state = '';
+            controller.clear();
+          },
+        ),
       ),
+      onChanged: (value) {
+        ref.read(searchQueryProvider.notifier).state = value;
+      },
     );
   }
 }

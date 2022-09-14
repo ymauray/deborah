@@ -1,0 +1,18 @@
+Lecture des listes de paquets…
+Construction de l'arbre des dépendances…
+Lecture des informations d'état…
+Les paquets suivants seront ENLEVÉS :
+  1password
+0 mis à jour, 0 nouvellement installés, 1 à enlever et 39 non mis à jour.
+Après cette opération, 344 Mo d'espace disque seront libérés.
+(Lecture de la base de données... (Lecture de la base de données... 5%(Lecture de la base de données... 10%(Lecture de la base de données... 15%(Lecture de la base de données... 20%(Lecture de la base de données... 25%(Lecture de la base de données... 30%(Lecture de la base de données... 35%(Lecture de la base de données... 40%(Lecture de la base de données... 45%(Lecture de la base de données... 50%(Lecture de la base de données... 55%(Lecture de la base de données... 60%(Lecture de la base de données... 65%(Lecture de la base de données... 70%(Lecture de la base de données... 75%(Lecture de la base de données... 80%(Lecture de la base de données... 85%(Lecture de la base de données... 90%(Lecture de la base de données... 95%(Lecture de la base de données... 100%(Lecture de la base de données... 425496 fichiers et répertoires déjà installés.)
+Suppression de 1password (8.9.4) ...
+Traitement des actions différées (« triggers ») pour desktop-file-utils (0.26-1ubuntu3) ...
+Traitement des actions différées (« triggers ») pour hicolor-icon-theme (0.17-2) ...
+Traitement des actions différées (« triggers ») pour gnome-menus (3.36.0-1ubuntu3) ...
+Traitement des actions différées (« triggers ») pour mate-menus (1.26.0-2ubuntu2) ...
+Traitement des actions différées (« triggers ») pour mailcap (3.70+nmu1ubuntu1) ...
+Traitement des actions différées (« triggers ») pour bamfdaemon (0.5.6+22.04.20220217-0ubuntu1) ...
+Rebuilding /usr/share/applications/bamf-2.index...
+  [[32m+[0m] Removing /etc/apt/trusted.gpg.d/1password.asc
+  [[32m+[0m] Removing /etc/apt/sources.list.d/1password.list

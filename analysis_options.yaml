@@ -1,8 +1,9 @@
-include: package:flutter_lints/flutter.yaml
+include: package:very_good_analysis/analysis_options.yaml
 
 linter:
   rules:
     use_build_context_synchronously: false
+    public_member_api_docs: false
 
 analyzer:
   plugins:
