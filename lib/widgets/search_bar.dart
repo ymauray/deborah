@@ -15,7 +15,7 @@ class SearchBar extends ConsumerWidget {
         hintText: 'Search',
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(8.0),
+            Radius.circular(8),
           ),
         ),
         suffixIcon: IconButton(
