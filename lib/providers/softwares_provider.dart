@@ -58,8 +58,9 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
           () => software,
         );
 
-        ref.read(statusLineProvider.notifier).state =
-            'Loading : ${software.prettyName}';
+        _updateStatusLine('Loading', software.prettyName);
+        //ref.read(statusLineProvider.notifier).state =
+        //    'Loading : ${software.prettyName}';
       }
     }
 
@@ -84,11 +85,7 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
       ['install', software.packageName],
       elevate: true,
       (line) {
-        var status = line.replaceAll('\n', ' ').trim();
-        if (status.length > 140) status = status.substring(0, 140);
-        if (status.isNotEmpty) {
-          ref.read(statusLineProvider.notifier).state = 'Installing : $status';
-        }
+        _updateStatusLine('Installing', line);
       },
       (exitCode) {
         ref.read(menuEnabledProvider.notifier).state = true;
@@ -107,11 +104,7 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
       ['remove', software.packageName],
       elevate: true,
       (line) {
-        var status = line.replaceAll('\n', ' ').trim();
-        if (status.length > 140) status = status.substring(0, 140);
-        if (status.isNotEmpty) {
-          ref.read(statusLineProvider.notifier).state = 'Removing : $status';
-        }
+        _updateStatusLine('Removing', line);
       },
       (exitCode) {
         ref.read(menuEnabledProvider.notifier).state = true;
@@ -154,6 +147,69 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
         ];
       },
     );
+  }
+
+  void checkUpdates() {
+    ref.read(menuEnabledProvider.notifier).state = false;
+    for (final app in state) {
+      app.updateAvailable = false;
+    }
+    DebGet.run(
+      ['update'],
+      elevate: true,
+      (line) {
+        _updateStatusLine('Checking for updates', line);
+        if (line.contains('has an update pending')) {
+          final r = RegExp(r'.* (.*) \(.*\) has an update pending');
+          final m = r.firstMatch(line);
+          final packageName = m?.group(1);
+          if (packageName != null) {
+            state
+                .firstWhere(
+                  (element) => element.packageName == packageName,
+                )
+                .updateAvailable = true;
+          }
+        }
+      },
+      (exitCode) {
+        ref.read(menuEnabledProvider.notifier).state = true;
+        ref.read(statusLineProvider.notifier).state = 'Ready';
+      },
+    );
+  }
+
+  void update(Software software) {
+    ref.read(menuEnabledProvider.notifier).state = false;
+    ref.read(statusLineProvider.notifier).state =
+        'Updating ${software.prettyName}';
+    DebGet.run(
+      ['reinstall', software.packageName],
+      elevate: true,
+      (line) {
+        _updateStatusLine('Updating', line);
+      },
+      (exitCode) {
+        software.updateAvailable = false;
+        ref.read(menuEnabledProvider.notifier).state = true;
+        ref.read(statusLineProvider.notifier).state =
+            'Updated ${software.prettyName}';
+        refreshApp(software);
+      },
+    );
+  }
+
+  void _updateStatusLine(String prefix, String line) {
+    var status = line.replaceAll('\n', ' ').trim();
+    if (status.startsWith('[')) {
+      status = status.substring(status.indexOf(']') + 1).trim();
+    }
+    if (status.length > 140) {
+      status = status.substring(0, 140);
+    }
+    if (status.isNotEmpty) {
+      ref.read(statusLineProvider.notifier).state = '$prefix : $status';
+    }
   }
 }
 
