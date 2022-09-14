@@ -9,6 +9,7 @@ class Software {
     this.info,
     this.expanded = false,
     this.installed = false,
+    this.updateAvailable = false,
   });
 
   String packageName;
@@ -20,6 +21,7 @@ class Software {
   String? info;
   bool expanded;
   bool installed;
+  bool updateAvailable;
 
   Software clone() => Software(
         packageName: packageName,
@@ -31,6 +33,7 @@ class Software {
         info: info,
         expanded: expanded,
         installed: installed,
+        updateAvailable: updateAvailable,
       );
 
   Software copyWith({
@@ -43,6 +46,7 @@ class Software {
     String? info,
     bool? expanded,
     bool? installed,
+    bool? updateAvailable,
   }) =>
       Software(
         packageName: packageName ?? this.packageName,
@@ -54,6 +58,7 @@ class Software {
         info: info ?? this.info,
         expanded: expanded ?? this.expanded,
         installed: installed ?? this.installed,
+        updateAvailable: updateAvailable ?? this.updateAvailable,
       );
 
   @override
@@ -62,6 +67,7 @@ class Software {
         'packageName: $packageName, prettyName: $prettyName, '
         'description: $description, icon: $icon, '
         'installedVersion: $installedVersion, architecture: $architecture, '
-        'info: $info, expanded: $expanded, installed: $installed)';
+        'info: $info, expanded: $expanded, installed: $installed, '
+        'updateAvailable: $updateAvailable)';
   }
 }

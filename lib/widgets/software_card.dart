@@ -25,6 +25,14 @@ class _SoftwareCardState extends ConsumerState<SoftwareCard> {
 
   @override
   Widget build(BuildContext context) {
+    var installedVersion = '';
+    if (widget._app.installedVersion != '') {
+      installedVersion = widget._app.installedVersion;
+      if (widget._app.updateAvailable) {
+        installedVersion += ' (update available)';
+      }
+    }
+
     return Column(
       children: [
         MouseRegion(
@@ -107,8 +115,17 @@ class _SoftwareCardState extends ConsumerState<SoftwareCard> {
                           ),
                           if (widget._app.installedVersion != '')
                             Text(
-                              widget._app.installedVersion,
-                              style: Theme.of(context).textTheme.bodySmall,
+                              installedVersion,
+                              style: widget._app.updateAvailable
+                                  ? Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      )
+                                  : null,
                             ),
                         ],
                       ),
@@ -186,30 +203,49 @@ class _SoftwareMeta extends ConsumerWidget {
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        if (!_software.installed)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: ElevatedButton(
-              onPressed: () {
-                ref.read(softwaresProvider.notifier).install(_software);
-              },
-              child: const Text(
-                'Install',
+        Row(
+          children: [
+            if (!_software.installed)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    ref.read(softwaresProvider.notifier).install(_software);
+                  },
+                  child: const Text(
+                    'Install',
+                  ),
+                ),
               ),
-            ),
-          ),
-        if (_software.installed)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: ElevatedButton(
-              onPressed: () {
-                ref.read(softwaresProvider.notifier).remove(_software);
-              },
-              child: const Text(
-                'Remove',
+            if (_software.installed && _software.updateAvailable)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ref.read(softwaresProvider.notifier).update(_software);
+                    },
+                    child: const Text(
+                      'Update',
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
+            if (_software.installed)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    ref.read(softwaresProvider.notifier).remove(_software);
+                  },
+                  child: const Text(
+                    'Remove',
+                  ),
+                ),
+              ),
+          ],
+        ),
       ],
     );
   }

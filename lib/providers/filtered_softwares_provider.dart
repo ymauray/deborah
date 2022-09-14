@@ -17,7 +17,7 @@ final filteredSoftwaresProvider = Provider<List<Software>>((ref) {
   }
 
   if (onlyShowUpgradableApps) {
-    apps = apps.where((app) => false).toList();
+    apps = apps.where((app) => app.updateAvailable).toList();
   }
 
   if (query.isEmpty) return apps;
