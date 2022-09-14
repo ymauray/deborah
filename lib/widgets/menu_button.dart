@@ -6,18 +6,17 @@ class MenuButton extends ConsumerWidget {
   const MenuButton({
     required String label,
     required SelectedMenuItemEnum menuItem,
-    Key? key,
+    super.key,
   })  : _label = label,
-        _menuItem = menuItem,
-        super(key: key);
+        _menuItem = menuItem;
 
   final String _label;
   final SelectedMenuItemEnum _menuItem;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var menuEnabled = ref.watch(menuStateProvider);
-    var selected = ref.watch(selectedMenuItemProvider) == _menuItem;
+    final menuEnabled = ref.watch(menuEnabledProvider);
+    final selected = ref.watch(selectedMenuItemProvider) == _menuItem;
 
     return TextButton(
       onPressed: menuEnabled
@@ -26,22 +25,23 @@ class MenuButton extends ConsumerWidget {
             }
           : null,
       style: Theme.of(context).textButtonTheme.style!.copyWith(
+            foregroundColor: MaterialStateProperty.resolveWith<Color?>(
+              (states) => states.contains(MaterialState.hovered)
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : selected && menuEnabled
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+            ),
             backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-              (states) => (states.contains(MaterialState.hovered)
+              (states) => states.contains(MaterialState.hovered)
                   ? Theme.of(context).colorScheme.primary
                   : selected && menuEnabled
                       ? Theme.of(context).colorScheme.primary
-                      : null),
+                      : null,
             ),
           ),
       child: Text(
         _label,
-        style: menuEnabled
-            ? Theme.of(context).textTheme.labelLarge
-            : Theme.of(context)
-                .textTheme
-                .labelLarge!
-                .copyWith(color: Colors.grey),
       ),
     );
   }

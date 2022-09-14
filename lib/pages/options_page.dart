@@ -13,23 +13,22 @@ class OptionsPage extends ConsumerWidget {
     final formKey = GlobalKey<FormBuilderState>();
     final controller = TextEditingController();
 
-    var env = Platform.environment;
-    var token = env['DEBGET_TOKEN'];
-    debugPrint(token);
+    final env = Platform.environment;
+    final token = env['DEBGET_TOKEN'];
 
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0).copyWith(left: 0.0, top: 16.0),
+            padding: const EdgeInsets.all(8).copyWith(left: 0, top: 16),
             child: Text(
-              "Options",
+              'Options',
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+            padding: const EdgeInsets.only(right: 8),
             child: Column(
               children: [
                 FormBuilder(
@@ -48,15 +47,13 @@ class OptionsPage extends ConsumerWidget {
                               'leave empty for default)',
                           suffixIcon: IconButton(
                             icon: const Icon(Icons.close),
-                            onPressed: () {
-                              controller.clear();
-                            },
+                            onPressed: controller.clear,
                           ),
                         ),
                         onChanged: (value) {
                           LocalStorage.set(
                             LocalStorage.debgetpathKey,
-                            (value ?? ''),
+                            value ?? '',
                           );
                         },
                       ),
@@ -67,9 +64,9 @@ class OptionsPage extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0).copyWith(left: 0.0, top: 16.0),
+            padding: const EdgeInsets.all(8).copyWith(left: 0, top: 16),
             child: Text(
-              "GitHub API Rate Limits",
+              'GitHub API Rate Limits',
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
