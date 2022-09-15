@@ -35,7 +35,7 @@ ppa: version
 	cd /mnt/data/dev/debianpackages/deborah.deb/deborah ; \
 	dch -v $(VERSION) "New changelog message" ; \
 	vi debian/changelog ; \
-	for dist in focal jammy; do \
+	for dist in focal jammy kinetic; do \
 		sed -i "1 s/^\(.*\)) UNRELEASED;\(.*\)\$$/\1~xxx1.0) xxx;\2/g" debian/changelog ; \
 		sed -i "1 s/~.*1\.0) .*;\(.*\)\$$/~$${dist}1.0) $$dist;\1/g" debian/changelog ; \
 		dpkg-buildpackage -d -S -sa ; \

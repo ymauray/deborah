@@ -1,9 +1,13 @@
 * bump the version number in pubspec.yaml (ex: version: 0.1.0-alpha.2)
 * push to github
 * create and push version tag (ex: v0.1.0-alpha.2)
-* create a release on GitHub
-* build the tarball (`make`)
-* upload the tarball to github
+* build the tarball (`make bin`)
+* upload to launchpaf (`make ppa`)
+* wait for the `.deb`s to build
+* download the `.deb`s
+* create a new release on GitHub
+
+Legacy notes, for reference :
 
 * `cd /mnt/data/dev/debianpackages/deborah.deb/deborah`
 * `head debian/changelog` to check the latest changelog
