@@ -2,15 +2,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
   static const debgetpathKey = 'debgetpath';
+  static const showTokenWarningKey = 'showTokenWarning';
 
   static SharedPreferences? _prefs;
 
-  static void init() async {
+  static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
   static T get<T>(String key, T defaultValue) {
-    return (_prefs?.get(key) ?? defaultValue) as T;
+    final keys = _prefs?.getKeys();
+    final value = _prefs?.get(key);
+
+    return (value ?? defaultValue) as T;
   }
 
   static void set<T>(String key, T value) {

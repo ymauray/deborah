@@ -1,18 +1,20 @@
+import 'dart:math';
+
 import 'package:csv/csv.dart';
-import 'package:deborah/models/software.dart';
+import 'package:deborah/models/app.dart';
 import 'package:deborah/providers/menu_enabled_provider.dart';
 import 'package:deborah/providers/status_line_provider.dart';
 import 'package:deborah/utils/deb_get.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SoftwaresNotifier extends StateNotifier<List<Software>> {
-  SoftwaresNotifier(this.ref) : super(<Software>[]);
+class AppsNotifier extends StateNotifier<List<App>> {
+  AppsNotifier(this.ref) : super(<App>[]);
 
-  StateNotifierProviderRef<SoftwaresNotifier, List<Software>> ref;
+  StateNotifierProviderRef<AppsNotifier, List<App>> ref;
 
   // ignore: long-method
   void refresh() {
-    final applications = <String, Software>{};
+    final apps = <String, App>{};
 
     Future<void> parseCsvlistOutput(String lines) async {
       const converter = CsvToListConverter();
@@ -44,7 +46,7 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
           }
         })(method);
 
-        final software = Software(
+        final app = App(
           packageName: packageName,
           prettyName: prettyName,
           description: description,
@@ -53,14 +55,12 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
           architecture: architecture,
         );
 
-        applications.putIfAbsent(
+        apps.putIfAbsent(
           packageName,
-          () => software,
+          () => app,
         );
 
-        _updateStatusLine('Loading', software.prettyName);
-        //ref.read(statusLineProvider.notifier).state =
-        //    'Loading : ${software.prettyName}';
+        _updateStatusLine('Loading', app.prettyName);
       }
     }
 
@@ -71,18 +71,23 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
       (exitCode) {
         ref.read(menuEnabledProvider.notifier).state = true;
         ref.read(statusLineProvider.notifier).state = 'Ready';
-        state = [for (final app in applications.values) app];
+        state = apps.values.toList();
+        state.sort(
+          (a, b) => a.prettyName.toLowerCase().compareTo(
+                b.prettyName.toLowerCase(),
+              ),
+        );
       },
     );
   }
 
   // ignore: long-method
-  void install(Software software) {
+  void install(App app) {
     ref.read(menuEnabledProvider.notifier).state = false;
     ref.read(statusLineProvider.notifier).state =
-        'Installing ${software.prettyName}';
+        'Installing ${app.prettyName}';
     DebGet.run(
-      ['install', software.packageName],
+      ['install', app.packageName],
       elevate: true,
       (line) {
         _updateStatusLine('Installing', line);
@@ -90,18 +95,17 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
       (exitCode) {
         ref.read(menuEnabledProvider.notifier).state = true;
         ref.read(statusLineProvider.notifier).state =
-            'Installed ${software.prettyName}';
-        refreshApp(software);
+            'Installed ${app.prettyName}';
+        refreshApp(app);
       },
     );
   }
 
-  void remove(Software software) {
+  void remove(App app) {
     ref.read(menuEnabledProvider.notifier).state = false;
-    ref.read(statusLineProvider.notifier).state =
-        'Removing ${software.prettyName}';
+    ref.read(statusLineProvider.notifier).state = 'Removing ${app.prettyName}';
     DebGet.run(
-      ['remove', software.packageName],
+      ['remove', app.packageName],
       elevate: true,
       (line) {
         _updateStatusLine('Removing', line);
@@ -109,21 +113,21 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
       (exitCode) {
         ref.read(menuEnabledProvider.notifier).state = true;
         ref.read(statusLineProvider.notifier).state =
-            'Removed ${software.prettyName}';
-        refreshApp(software);
+            'Removed ${app.prettyName}';
+        refreshApp(app);
       },
     );
   }
 
-  void refreshApp(Software software) {
+  void refreshApp(App app) {
     final lines = <String>[];
     DebGet.run(
-      ['show', software.packageName],
+      ['show', app.packageName],
       (line) {
         lines.addAll(line.split('\n').map((e) => e.trim()));
       },
       (exitCode) {
-        software
+        app
           ..info = lines
               .skip(1)
               .where(
@@ -132,19 +136,19 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
                     !element.startsWith('Summary'),
               )
               .join('\n')
-          ..installed = !(software.info?.contains('Installed:\tNo') ?? false);
+          ..installed = !(app.info?.contains('Installed:\tNo') ?? false);
 
-        if (software.installed) {
+        if (app.installed) {
           final r = RegExp(r'Installed:\s*(.*)\n');
-          final m = r.firstMatch(software.info ?? '');
-          software.installedVersion = m?.group(1) ?? '';
+          final m = r.firstMatch(app.info ?? '');
+          app.installedVersion = m?.group(1) ?? '';
         } else {
-          software.installedVersion = '';
+          app.installedVersion = '';
         }
-        state = [
-          for (final app in state)
-            if (app.packageName == software.packageName) software else app,
-        ];
+        //state = [
+        //  for (final updatedApp in state)
+        //    if (updatedApp.packageName == app.packageName) app else updatedApp,
+        //];
       },
     );
   }
@@ -179,22 +183,21 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
     );
   }
 
-  void update(Software software) {
+  void update(App app) {
     ref.read(menuEnabledProvider.notifier).state = false;
-    ref.read(statusLineProvider.notifier).state =
-        'Updating ${software.prettyName}';
+    ref.read(statusLineProvider.notifier).state = 'Updating ${app.prettyName}';
     DebGet.run(
-      ['reinstall', software.packageName],
+      ['reinstall', app.packageName],
       elevate: true,
       (line) {
         _updateStatusLine('Updating', line);
       },
       (exitCode) {
-        software.updateAvailable = false;
+        app.updateAvailable = false;
         ref.read(menuEnabledProvider.notifier).state = true;
         ref.read(statusLineProvider.notifier).state =
-            'Updated ${software.prettyName}';
-        refreshApp(software);
+            'Updated ${app.prettyName}';
+        refreshApp(app);
       },
     );
   }
@@ -204,16 +207,13 @@ class SoftwaresNotifier extends StateNotifier<List<Software>> {
     if (status.startsWith('[')) {
       status = status.substring(status.indexOf(']') + 1).trim();
     }
-    if (status.length > 140) {
-      status = status.substring(0, 140);
-    }
+    status = status.substring(0, min(100, status.length));
     if (status.isNotEmpty) {
       ref.read(statusLineProvider.notifier).state = '$prefix : $status';
     }
   }
 }
 
-final softwaresProvider =
-    StateNotifierProvider<SoftwaresNotifier, List<Software>>(
-  SoftwaresNotifier.new,
+final appsProvider = StateNotifierProvider<AppsNotifier, List<App>>(
+  AppsNotifier.new,
 );
