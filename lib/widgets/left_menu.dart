@@ -26,7 +26,7 @@ class LeftMenu extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         const MenuButton(
-          label: 'Applications',
+          label: 'Apps',
           menuItem: SelectedMenuItemEnum.applications,
         ),
         const SizedBox(height: 8),

@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:deborah/providers/show_token_warning_provider.dart';
 import 'package:deborah/utils/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -63,8 +64,14 @@ class OptionsPage extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(
+            height: 8,
+          ),
+          const Divider(
+            thickness: 1,
+          ),
           Padding(
-            padding: const EdgeInsets.all(8).copyWith(left: 0, top: 16),
+            padding: const EdgeInsets.all(8).copyWith(left: 0),
             child: Text(
               'GitHub API Rate Limits',
               style: Theme.of(context).textTheme.titleLarge,
@@ -73,8 +80,8 @@ class OptionsPage extends ConsumerWidget {
           if ((token ?? '') == '')
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   'deb-get uses the GitHub REST API for some functionality '
                   'when applications are provided via GitHub Releases  and for '
                   'unauthenticated interactions this API is rate-limited to 60 '
@@ -86,8 +93,8 @@ class OptionsPage extends ConsumerWidget {
                   'result in, for example, temporary failures to be able to '
                   'upgrade or install applications via GitHub Releases .',
                 ),
-                SizedBox(height: 8),
-                Text(
+                const SizedBox(height: 8),
+                const Text(
                   'If you have a GitHub account you can authenticate your '
                   'GitHub API usage to increase your rate-limit to 5000 '
                   'requests per hour per authenticated user. To do this you '
@@ -96,6 +103,30 @@ class OptionsPage extends ConsumerWidget {
                   'appropriate exiting token) you should insert it into an '
                   'environment variable (DEBGET_TOKEN) for deb-get to pick up '
                   'and use to authenticate to the GitHub API.',
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                const Divider(
+                  thickness: 1,
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      'Show warning on apps page if token is not set',
+                    ),
+                    Switch(
+                      value: ref.watch(showTokenWarningProvider),
+                      onChanged: (value) {
+                        LocalStorage.set(
+                          LocalStorage.showTokenWarningKey,
+                          value,
+                        );
+                        ref.read(showTokenWarningProvider.notifier).state =
+                            value;
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

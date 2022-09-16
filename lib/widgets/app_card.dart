@@ -1,22 +1,24 @@
 import 'dart:async';
 
-import 'package:deborah/models/software.dart';
+import 'package:deborah/models/app.dart';
 import 'package:deborah/providers.dart';
 import 'package:deborah/utils/deb_get.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class SoftwareCard extends ConsumerStatefulWidget {
-  const SoftwareCard(Software app, {super.key}) : _app = app;
+class AppCard extends ConsumerStatefulWidget {
+  const AppCard(App app, {super.key}) : _app = app;
 
-  final Software _app;
+  final App _app;
 
   @override
-  ConsumerState<SoftwareCard> createState() => _SoftwareCardState();
+  ConsumerState<AppCard> createState() => _AppCardState();
 }
 
-class _SoftwareCardState extends ConsumerState<SoftwareCard> {
-  Completer<Software> completer = Completer<Software>();
+class _AppCardState extends ConsumerState<AppCard> {
+  Completer<App> completer = Completer<App>();
 
   @override
   void initState() {
@@ -45,7 +47,17 @@ class _SoftwareCardState extends ConsumerState<SoftwareCard> {
                 DebGet.run(
                   ['show', widget._app.packageName],
                   (line) {
-                    lines.addAll(line.split('\n').map((e) => e.trim()));
+                    lines.addAll(
+                      line.split('\n').map((e) {
+                        var status = e;
+                        if (status.startsWith('[')) {
+                          status =
+                              status.substring(status.indexOf(']') + 1).trim();
+                        }
+
+                        return status.trim();
+                      }),
+                    );
                   },
                   (exitCode) {
                     widget._app.info = lines
@@ -96,6 +108,19 @@ class _SoftwareCardState extends ConsumerState<SoftwareCard> {
                         'assets/icons/${widget._app.icon}',
                         width: 32,
                       ),
+                    ),
+                  ),
+                  const VerticalDivider(width: 8),
+                  SizedBox(
+                    width: 48,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: (installedVersion != '')
+                          ? Icon(
+                              Icons.check_rounded,
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                          : Container(),
                     ),
                   ),
                   const VerticalDivider(width: 8),
@@ -161,11 +186,11 @@ class _SoftwareCardState extends ConsumerState<SoftwareCard> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: widget._app.info == null
-                        ? FutureBuilder<Software>(
+                        ? FutureBuilder<App>(
                             future: completer.future,
                             builder: (context, snapshot) {
                               return snapshot.hasData
-                                  ? _SoftwareMeta(snapshot.data!)
+                                  ? _AppMeta(snapshot.data!)
                                   : Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -175,7 +200,7 @@ class _SoftwareCardState extends ConsumerState<SoftwareCard> {
                                     );
                             },
                           )
-                        : _SoftwareMeta(widget._app),
+                        : _AppMeta(widget._app),
                   ),
                 ),
               ],
@@ -186,45 +211,83 @@ class _SoftwareCardState extends ConsumerState<SoftwareCard> {
   }
 }
 
-class _SoftwareMeta extends ConsumerWidget {
-  const _SoftwareMeta(Software software) : _software = software;
+class _AppMeta extends ConsumerWidget {
+  const _AppMeta(App app) : _app = app;
 
-  final Software _software;
+  final App _app;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Text(
-            _software.info ?? 'Error loading app info.',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+        DataTable(
+          headingRowHeight: 0,
+          horizontalMargin: 0,
+          dataTextStyle: Theme.of(context).textTheme.bodySmall,
+          columns: const [
+            DataColumn(label: Text('Package')),
+            DataColumn(label: Text('Summary')),
+          ],
+          rows: (_app.info ?? '')
+              .split('\n')
+              .where((line) => line.isNotEmpty)
+              .map<DataRow>((line) {
+            final chunks = line.split('\t');
+            final package = Text(chunks[0]);
+            final value = chunks.length == 2 ? chunks[1] : '';
+            final summary = value.startsWith('http')
+                ? Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: value,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(Uri.parse(Uri.encodeFull(value)));
+                            },
+                        ),
+                      ],
+                    ),
+                  )
+                : (chunks[0] == 'Repository:')
+                    ? SelectableText(value)
+                    : Text(value);
+
+            return DataRow(
+              cells: [
+                DataCell(package),
+                DataCell(summary),
+              ],
+            );
+          }).toList(),
         ),
+        const SizedBox(height: 8),
         Row(
           children: [
-            if (!_software.installed)
+            if (!_app.installed)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(softwaresProvider.notifier).install(_software);
+                    ref.read(appsProvider.notifier).install(_app);
                   },
                   child: const Text(
                     'Install',
                   ),
                 ),
               ),
-            if (_software.installed && _software.updateAvailable)
+            if (_app.installed && _app.updateAvailable)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: ElevatedButton(
                     onPressed: () {
-                      ref.read(softwaresProvider.notifier).update(_software);
+                      ref.read(appsProvider.notifier).update(_app);
                     },
                     child: const Text(
                       'Update',
@@ -232,12 +295,12 @@ class _SoftwareMeta extends ConsumerWidget {
                   ),
                 ),
               ),
-            if (_software.installed)
+            if (_app.installed)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(softwaresProvider.notifier).remove(_software);
+                    ref.read(appsProvider.notifier).remove(_app);
                   },
                   child: const Text(
                     'Remove',

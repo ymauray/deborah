@@ -1,5 +1,5 @@
-class Software {
-  Software({
+class App {
+  App({
     required this.packageName,
     required this.prettyName,
     required this.description,
@@ -23,7 +23,7 @@ class Software {
   bool installed;
   bool updateAvailable;
 
-  Software clone() => Software(
+  App clone() => App(
         packageName: packageName,
         prettyName: prettyName,
         description: description,
@@ -36,7 +36,7 @@ class Software {
         updateAvailable: updateAvailable,
       );
 
-  Software copyWith({
+  App copyWith({
     String? packageName,
     String? prettyName,
     String? description,
@@ -48,7 +48,7 @@ class Software {
     bool? installed,
     bool? updateAvailable,
   }) =>
-      Software(
+      App(
         packageName: packageName ?? this.packageName,
         prettyName: prettyName ?? this.prettyName,
         description: description ?? this.description,
@@ -63,7 +63,7 @@ class Software {
 
   @override
   String toString() {
-    return 'Software('
+    return 'App('
         'packageName: $packageName, prettyName: $prettyName, '
         'description: $description, icon: $icon, '
         'installedVersion: $installedVersion, architecture: $architecture, '

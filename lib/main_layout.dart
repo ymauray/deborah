@@ -12,8 +12,8 @@ class MainLayout extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedMenuItem = ref.watch(selectedMenuItemProvider);
 
-    if (ref.read(softwaresProvider).isEmpty) {
-      ref.read(softwaresProvider.notifier).refresh();
+    if (ref.read(appsProvider).isEmpty) {
+      ref.read(appsProvider.notifier).refresh();
     }
 
     return Row(

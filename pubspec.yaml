@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0-beta.2
+version: 1.0.2-beta
 
 environment:
   sdk: ">=2.17.5 <3.0.0"
@@ -16,6 +16,7 @@ dependencies:
   flutter_riverpod: ^1.0.4
   package_info_plus: ^1.4.2
   shared_preferences: ^2.0.15
+  url_launcher: ^6.1.5
   yaru: ^0.3.3
   yaru_icons: ^0.2.2
   yaru_widgets: ^1.1.2

@@ -1,7 +1,10 @@
-import 'package:deborah/models/software.dart';
+import 'dart:io';
+
+import 'package:deborah/models/app.dart';
 import 'package:deborah/providers.dart';
+import 'package:deborah/providers/show_token_warning_provider.dart';
+import 'package:deborah/widgets/app_card.dart';
 import 'package:deborah/widgets/search_bar.dart';
-import 'package:deborah/widgets/software_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,18 +13,51 @@ class ApplicationsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final softwares = ref.watch(filteredSoftwaresProvider);
+    final apps = ref.watch(filteredAppsProvider);
+
+    final env = Platform.environment;
+    final token = env['DEBGET_TOKEN'];
 
     return Expanded(
       child: Column(
         children: [
           const _SearchBar(),
-          _AppsList(softwares: softwares),
+          if ((token ?? '') != '' && ref.watch(showTokenWarningProvider))
+            Column(
+              children: [
+                const Divider(
+                  thickness: 1,
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.warning,
+                      color: Colors.yellow,
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      'Warning',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    const Text(
+                      " : it seems you don't have a GitHub API token set. "
+                      'Visit the options page to set one up.',
+                    ),
+                  ],
+                ),
+                const Divider(
+                  thickness: 1,
+                ),
+              ],
+            ),
+          _AppsList(apps: apps),
           const Divider(
             thickness: 2,
           ),
           /* Bottom bar */
-          _BottomBar(softwares: softwares),
+          _BottomBar(apps: apps),
           const Divider(
             thickness: 2,
           ),
@@ -62,10 +98,10 @@ class _StatusLine extends ConsumerWidget {
 
 class _BottomBar extends ConsumerWidget {
   const _BottomBar({
-    required this.softwares,
+    required this.apps,
   });
 
-  final List<Software> softwares;
+  final List<App> apps;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -81,8 +117,8 @@ class _BottomBar extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Showing ${softwares.length} '
-                    "software${softwares.length <= 1 ? '' : 's'}",
+                    'Showing ${apps.length} '
+                    "app${apps.length <= 1 ? '' : 's'}",
                   ),
                 ),
                 Expanded(
@@ -135,10 +171,10 @@ class _BottomBar extends ConsumerWidget {
 
 class _AppsList extends ConsumerWidget {
   const _AppsList({
-    required this.softwares,
+    required this.apps,
   });
 
-  final List<Software> softwares;
+  final List<App> apps;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -150,11 +186,11 @@ class _AppsList extends ConsumerWidget {
           AbsorbPointer(
             absorbing: absorbing,
             child: ListView.separated(
-              itemCount: softwares.length,
+              itemCount: apps.length,
               itemBuilder: (context, index) {
-                final app = softwares[index];
+                final app = apps[index];
 
-                return SoftwareCard(app);
+                return AppCard(app);
               },
               separatorBuilder: (context, index) {
                 return const Divider();
@@ -197,12 +233,29 @@ class _SearchBar extends ConsumerWidget {
                 ),
                 OutlinedButton(
                   onPressed: () {
-                    ref.read(softwaresProvider.notifier).checkUpdates();
+                    ref.read(appsProvider.notifier).checkUpdates();
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(14),
                     child: Text(
                       'Check for updates',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                OutlinedButton(
+                  onPressed: () {
+                    ref.read(appsProvider.notifier).refresh();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Text(
+                      'Refresh',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary,
                       ),
