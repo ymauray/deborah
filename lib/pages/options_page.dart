@@ -105,7 +105,7 @@ class OptionsPage extends ConsumerWidget {
                   'requests per hour per authenticated user. To do this you '
                   'will need to use a Personal Access Token (PAT). Once you '
                   'have created a token within GitHub (or identified an '
-                  'appropriate exiting token) you should insert it into an '
+                  'appropriate existing token) you should insert it into an '
                   'environment variable (DEBGET_TOKEN) for deb-get to pick up '
                   'and use to authenticate to the GitHub API.',
                 ),
