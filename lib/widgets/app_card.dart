@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:deborah/models/app.dart';
 import 'package:deborah/providers.dart';
 import 'package:deborah/utils/deb_get.dart';
@@ -18,8 +16,6 @@ class AppCard extends ConsumerStatefulWidget {
 }
 
 class _AppCardState extends ConsumerState<AppCard> {
-  Completer<App> completer = Completer<App>();
-
   @override
   void initState() {
     super.initState();
@@ -27,6 +23,9 @@ class _AppCardState extends ConsumerState<AppCard> {
 
   @override
   Widget build(BuildContext context) {
+    final completer =
+        ref.read(appsProvider.notifier).getCompleter(widget._app.packageName);
+
     var installedVersion = '';
     if (widget._app.installedVersion != '') {
       installedVersion = widget._app.installedVersion;
