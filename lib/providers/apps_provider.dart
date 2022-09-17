@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:csv/csv.dart';
@@ -11,6 +12,7 @@ class AppsNotifier extends StateNotifier<List<App>> {
   AppsNotifier(this.ref) : super(<App>[]);
 
   StateNotifierProviderRef<AppsNotifier, List<App>> ref;
+  Map<String, Completer<App>> completers = <String, Completer<App>>{};
 
   // ignore: long-method
   void refresh() {
@@ -210,6 +212,17 @@ class AppsNotifier extends StateNotifier<List<App>> {
     status = status.substring(0, min(100, status.length));
     if (status.isNotEmpty) {
       ref.read(statusLineProvider.notifier).state = '$prefix : $status';
+    }
+  }
+
+  Completer<App> getCompleter(String packageName) {
+    if (completers.containsKey(packageName)) {
+      return completers[packageName]!;
+    } else {
+      final completer = Completer<App>();
+      completers[packageName] = completer;
+
+      return completer;
     }
   }
 }
