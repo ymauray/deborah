@@ -12,7 +12,12 @@ class OptionsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = GlobalKey<FormBuilderState>();
-    final controller = TextEditingController();
+    final controller = TextEditingController(
+      text: LocalStorage.get(
+        LocalStorage.debgetpathKey,
+        '',
+      ),
+    );
 
     final env = Platform.environment;
     final token = env['DEBGET_TOKEN'];
