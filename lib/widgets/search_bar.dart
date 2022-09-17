@@ -7,7 +7,8 @@ class SearchBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = TextEditingController();
+    final controller =
+        TextEditingController(text: ref.read(searchQueryProvider));
 
     return TextField(
       controller: controller,
