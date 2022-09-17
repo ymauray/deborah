@@ -13,12 +13,8 @@
 <h2 align="center"></h2>
 <p align="center" style="color: red;"><b>WARNING</b></p>
 <p align="center">
-    <tt>deborah</tt> is still in development, and should absolutely and definitely not be used in production.<br/>
-    Some functionalities are missing, others are broken.
+    <tt>deborah</tt> is still in its early stage of infancy. There are things that may not work properly. If so, keep calm, and send a pull request ! 
 </p>
-<h1 align="center">
-    You've been warned.
-</h1>
 
 ## Introduction
 
@@ -30,7 +26,12 @@
 
 Since `deborah` uses [deb-get](https://github.com/wimpysworld/deb-get), you first need to install that. 
 
-Then, you can install `deborah` with the following command:
+Then, download the .deb from the [release](https://github.com/ymauray/deborah/releases) page, and install it using this command :
+```sh
+$ sudo apt install ./deborah_xxxxxx.deb
+```
+
+Once `Deborah` is supported by `deb-get` (a pull request has been sent), you will be able to install it with this command :
 
 ```sh
 $ sudo deb-get install deborah
