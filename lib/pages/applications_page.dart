@@ -22,7 +22,7 @@ class ApplicationsPage extends ConsumerWidget {
       child: Column(
         children: [
           const _SearchBar(),
-          if ((token ?? '') != '' && ref.watch(showTokenWarningProvider))
+          if ((token ?? '') == '' && ref.watch(showTokenWarningProvider))
             Column(
               children: [
                 const Divider(
