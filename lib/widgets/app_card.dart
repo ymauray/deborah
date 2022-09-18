@@ -47,30 +47,22 @@ class _AppCardState extends ConsumerState<AppCard> {
                   ['show', widget._app.packageName],
                   (line) {
                     lines.addAll(
-                      line.split('\n').map((e) {
-                        var status = e;
-                        if (status.startsWith('[')) {
-                          status =
-                              status.substring(status.indexOf(']') + 1).trim();
-                        }
-
-                        return status.trim();
-                      }),
+                      line.split('\n').where((e) => !e.trim().startsWith('[')),
                     );
                   },
                   (exitCode) {
-                    widget._app.info = lines
-                        .skip(1)
-                        .where(
-                          (element) =>
-                              !element.startsWith('Package') &&
-                              !element.startsWith('Summary'),
-                        )
-                        .join('\n');
+                    widget._app
+                      ..info = lines
+                          .where((line) => line.isNotEmpty)
+                          .skip(1)
+                          .where(
+                            (line) => !line.startsWith('Summary'),
+                          )
+                          .join('\n')
+                      ..installed =
+                          !(widget._app.info?.contains('Installed:\tNo') ??
+                              false);
 
-                    widget._app.installed =
-                        !(widget._app.info?.contains('Installed:\tNo') ??
-                            false);
                     if (widget._app.installed) {
                       final r = RegExp(r'Installed:\s*(.*)\n');
                       final m = r.firstMatch(widget._app.info ?? '');
