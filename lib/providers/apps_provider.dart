@@ -126,17 +126,16 @@ class AppsNotifier extends StateNotifier<List<App>> {
     DebGet.run(
       ['show', app.packageName],
       (line) {
-        lines.addAll(line.split('\n').map((e) => e.trim()));
+        lines.addAll(
+          line.split('\n').where((e) => !e.trim().startsWith('[')),
+        );
       },
       (exitCode) {
         app
           ..info = lines
+              .where((line) => line.isNotEmpty)
               .skip(1)
-              .where(
-                (element) =>
-                    !element.startsWith('Package') &&
-                    !element.startsWith('Summary'),
-              )
+              .where((line) => !line.startsWith('Summary'))
               .join('\n')
           ..installed = !(app.info?.contains('Installed:\tNo') ?? false);
 
