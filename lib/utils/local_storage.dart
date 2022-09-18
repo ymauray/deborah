@@ -11,7 +11,6 @@ class LocalStorage {
   }
 
   static T get<T>(String key, T defaultValue) {
-    final keys = _prefs?.getKeys();
     final value = _prefs?.get(key);
 
     return (value ?? defaultValue) as T;
