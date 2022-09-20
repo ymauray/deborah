@@ -146,10 +146,10 @@ class AppsNotifier extends StateNotifier<List<App>> {
         } else {
           app.installedVersion = '';
         }
-        //state = [
-        //  for (final updatedApp in state)
-        //    if (updatedApp.packageName == app.packageName) app else updatedApp,
-        //];
+        state = [
+          for (final updatedApp in state)
+            if (updatedApp.packageName == app.packageName) app else updatedApp,
+        ];
       },
     );
   }
