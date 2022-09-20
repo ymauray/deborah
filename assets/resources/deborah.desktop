@@ -6,3 +6,5 @@ Exec=/usr/bin/deborah
 Terminal=false
 Type=Application
 Icon=deborah_512.png
+Categories=Settings;PackageManager;Utility;System;
+
