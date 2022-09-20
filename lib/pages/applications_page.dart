@@ -85,10 +85,13 @@ class _StatusLine extends ConsumerWidget {
             ),
           ),
           if (absorbing)
-            const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(),
+            const Padding(
+              padding: EdgeInsets.only(right: 8),
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(),
+              ),
             ),
         ],
       ),
