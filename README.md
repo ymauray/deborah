@@ -55,7 +55,7 @@ You can also use a specific version of `deb-get` instead of the one in your curr
 
 Contributions are welcome, however, some rules must be followed to prevent chaos.
 
-1. **All comits must be signed.** Although this might be seen as a barrier for contributors, it is  something that must be done only once, and that will bring value to any future contribution. 
+1. **All commits must be signed.** Although this might be seen as a barrier for contributors, it is  something that must be done only once, and that will bring value to any future contribution. 
 2. **Pull requests should be named properly.** Again, what can be seen as an hindrance will, in the long run, improve the quality of the contributions, and shorten the time it takes to merge relevent pull requests.
 
 **Signing your commits**
