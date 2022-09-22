@@ -31,7 +31,7 @@ Then, download the .deb from the [release](https://github.com/ymauray/deborah/re
 $ sudo apt install ./deborah_xxxxxx.deb
 ```
 
-Once `Deborah` is supported by `deb-get` (a pull request has been sent), you will be able to install it with this command :
+You can install `deborah` using [deb-get](https://github.com/wimpysworld/deb-get) it with this command :
 
 ```sh
 $ sudo deb-get install deborah
