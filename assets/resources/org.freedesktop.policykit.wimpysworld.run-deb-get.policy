@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+
+ <vendor>Wimpy's World</vendor>
+  <vendor_url>https://github.com/wimpysworld/deb-get</vendor_url>
+
+ <action id="org.freedesktop.policykit.wimpysworld.run-deb-get">
+    <description>Run deb-get</description>
+    <message>Authentication is required to run deb-get</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_self_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/deb-get</annotate>
+  </action>
+
+</policyconfig>
