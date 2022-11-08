@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:deborah/models/app.dart';
 import 'package:deborah/providers.dart';
+import 'package:deborah/providers/debget_status_provider.dart';
 import 'package:deborah/providers/show_token_warning_provider.dart';
 import 'package:deborah/widgets/app_card.dart';
+import 'package:deborah/widgets/debget_not_found_error.dart';
 import 'package:deborah/widgets/search_bar.dart';
+import 'package:deborah/widgets/token_warning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,36 +25,9 @@ class ApplicationsPage extends ConsumerWidget {
       child: Column(
         children: [
           const _SearchBar(),
+          if (!ref.read(debgetStatusProvider)) const DebgetNotFoundError(),
           if ((token ?? '') == '' && ref.watch(showTokenWarningProvider))
-            Column(
-              children: [
-                const Divider(
-                  thickness: 1,
-                ),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.warning,
-                      color: Colors.yellow,
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      'Warning',
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    const Text(
-                      " : it seems you don't have a GitHub API token set. "
-                      'Visit the options page to set one up.',
-                    ),
-                  ],
-                ),
-                const Divider(
-                  thickness: 1,
-                ),
-              ],
-            ),
+            const TokenWarning(),
           _AppsList(apps: apps),
           const Divider(
             thickness: 2,

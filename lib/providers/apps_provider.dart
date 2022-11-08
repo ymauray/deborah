@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:csv/csv.dart';
 import 'package:deborah/models/app.dart';
+import 'package:deborah/providers/debget_status_provider.dart';
 import 'package:deborah/providers/menu_enabled_provider.dart';
 import 'package:deborah/providers/status_line_provider.dart';
 import 'package:deborah/utils/deb_get.dart';
@@ -71,6 +72,9 @@ class AppsNotifier extends StateNotifier<List<App>> {
       ['csvlist'],
       parseCsvlistOutput,
       (exitCode) {
+        if (exitCode == -9999) {
+          ref.read(debgetStatusProvider.notifier).state = false;
+        }
         ref.read(menuEnabledProvider.notifier).state = true;
         ref.read(statusLineProvider.notifier).state = 'Ready';
         state = apps.values.toList();

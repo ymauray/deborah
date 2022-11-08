@@ -1,6 +1,7 @@
 import 'package:deborah/pages/applications_page.dart';
 import 'package:deborah/pages/options_page.dart';
 import 'package:deborah/providers.dart';
+import 'package:deborah/providers/debget_status_provider.dart';
 import 'package:deborah/widgets/left_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,7 @@ class MainLayout extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedMenuItem = ref.watch(selectedMenuItemProvider);
 
-    if (ref.read(appsProvider).isEmpty) {
+    if (ref.read(appsProvider).isEmpty && ref.read(debgetStatusProvider)) {
       ref.read(appsProvider.notifier).refresh();
     }
 

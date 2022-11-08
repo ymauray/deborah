@@ -20,6 +20,8 @@ class DebGet {
     ).then((process) {
       process.stdout.transform(utf8.decoder).forEach(action);
       if (exit != null) process.exitCode.then(exit);
+    }).catchError((_) {
+      if (exit != null) exit(-9999);
     });
   }
 }
